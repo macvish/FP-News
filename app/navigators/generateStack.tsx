@@ -15,6 +15,7 @@ const renderScreen = (
 ) => {
   return (
     <Stack.Screen
+      key={index}
       name={name}
       component={component}
       options={options}
