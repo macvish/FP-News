@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   title: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold'
   }

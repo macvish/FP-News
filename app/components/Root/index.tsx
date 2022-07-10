@@ -2,7 +2,7 @@ import React from 'react'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-interface RootProps extends KeyboardAwareScrollView {
+interface RootProps {
   children?: React.ReactNode
   noPadding?: boolean
   style?: StyleProp<ViewStyle>
@@ -43,3 +43,5 @@ const Root: React.FC<RootProps> = ({
     </>
   )
 }
+
+export default Root
