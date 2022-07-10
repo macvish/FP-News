@@ -1,13 +1,13 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { RenderScreenProps } from './models'
+import { RenderScreenProps, RootStackParamList } from './models'
 
 interface GenerateStackProps {
   paths: RenderScreenProps[]
 }
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator<RootStackParamList>()
 
 const renderScreen = (
   { name, component, options }: RenderScreenProps,
