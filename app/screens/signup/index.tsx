@@ -10,9 +10,10 @@ const Signup = () => {
   const navigation = useNavigation<SignupScreenNavigationProps>()
   return <View style={{ padding: 20 }}>
     <Text>Signup</Text>
-    <Button onPress={() => navigation.push('NewsListing')}>
-      <Text>Click here</Text>
-    </Button>
+    <Button
+      title='Click here'
+      onPress={() => navigation.push('NewsListing')}
+    />
   </View>
 }
 

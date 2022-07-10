@@ -11,6 +11,7 @@ module.exports = {
         '@typescript-eslint/no-shadow': ['error'],
         'no-shadow': 'off',
         'no-undef': 'off',
+        'no-whitespace-before-property': 2,
         'no-unused-vars': 1,
         'react/prop-types': 0,
         'react/jsx-key': 1,
