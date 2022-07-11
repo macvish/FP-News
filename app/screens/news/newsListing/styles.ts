@@ -3,11 +3,16 @@ import { colors } from '../../../lib/helper'
 import metrics from '../../../lib/metrics'
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20
+  headerContainer: {
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    minHeight: metrics.screenWidth / 2,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
   title: {
-    fontSize: 25,
+    fontSize: 30,
+    color: colors.white,
     fontWeight: '600',
     textAlign: 'center'
   },
@@ -29,10 +34,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    marginVertical: 5,
+    marginVertical: 10,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#EDEEEE'
+    borderColor: '#EDEEEE',
   },
   newsItemImage: {
     width: metrics.screenWidth/6,
@@ -53,6 +58,11 @@ const styles = StyleSheet.create({
   newsItemDate: {
     color: colors.textSecondary,
     textAlign: 'right'
+  },
+  emptyPlaceholder: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: 'center'
   }
 })
 

@@ -12,5 +12,7 @@ export const trimText = (text?: string, length?: number) => {
 }
 
 export const colors = {
-  textSecondary: '#5F5E5F'
+  primary: '#2a9df4',
+  textSecondary: '#5F5E5F',
+  white: '#FFFFFF'
 }
