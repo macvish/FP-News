@@ -1,13 +1,63 @@
-import { rootReducer } from "./store"
+import { Action, ThunkAction } from "@reduxjs/toolkit"
+
+import store, { rootReducer } from "./store"
 
 export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = typeof store.dispatch
 
 export interface AuthState {
   message?: string
 }
 
+export interface NewsState {
+  news: News
+  isLoading?: boolean
+  errorMessage?: string
+}
+
+export interface News {
+  articles?: Article[]
+  page?: number
+  pageSize?: number
+  status?: string
+  totalHits?: number
+  totalPages?: number
+  userInput?: {
+    from?: string
+    lang?: string
+    page?: number
+    q?: string
+    size?: number
+    sortBy?: string
+  }
+}
+
+export interface Article {
+  _id?: string
+_score?: number
+author?: string
+authors?: string[]
+cleanUrl?: string
+country?: string
+isOpinion?:false
+language?: string
+link?: string
+media?: string
+publishedDate?: string
+publishedDatePrecision?: string
+rank?: number
+rights?: string
+summary?: string
+title?: string
+topic?: string
+}
+
 export enum ActionTypes {
-  LOGIN = '[AUTH] LOGIN'
+  LOGIN = '[AUTH] LOGIN',
+  FETCH_NEWS = '[NEWS] FETCH_NEWS',
+  GET_NEWS = '[NEWS] GET_NEWS',
+  IS_LOADING = '[NEWS] IS_LOADING'
 }
 
 export interface LoginData {
