@@ -22,6 +22,7 @@ import { AppDispatch, Article, NewsState } from '../../../redux/model'
 import { newsSelector } from '../../../redux/reducer/newsReducer'
 import styles from './styles'
 import { trimText, colors } from '../../../lib/helper'
+import metrics from '../../../lib/metrics'
 
 interface RenderItemProps {
   item: Article
@@ -29,7 +30,7 @@ interface RenderItemProps {
 }
 
 const NewsListing: React.FC = () => {
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>('Nigeria')
   const dispatch = useDispatch<AppDispatch>()
   const { news, isLoading, errorMessage } = useSelector(newsSelector)
   const navigation = useNavigation<NewsListingScreenNavigationProps>()
@@ -53,7 +54,7 @@ const NewsListing: React.FC = () => {
       activeOpacity={0.5}
       onPress={() => navigation.navigate('NewsDetails', { newsDetails: item })}
     >
-      <Image source={{ uri: item.media }} style={styles.newsItemImage} />
+      <Image source={{ uri: item.media ?? '' }} style={styles.newsItemImage} />
       <View style={styles.newsItemTitleWrapper}>
         <Text style={styles.newsItemTitle}>{trimText(item.title, 15)}</Text>
         <Text style={styles.newItemTopic}>{item.topic?.toUpperCase()}</Text>
@@ -69,7 +70,7 @@ const NewsListing: React.FC = () => {
       </View>
     }
 
-    if (isEmpty(news)) {
+    if (isEmpty(news.articles)) {
       return (
         <View style={styles.loaderWrapper}>
           <Text style={styles.emptyPlaceholder}>
@@ -84,11 +85,42 @@ const NewsListing: React.FC = () => {
       renderItem={renderItem}
     />
   }
+
+  useEffect(() => {
+    const makeApiCall  = async () => {
+      const result = await dispatch(fetchNews(searchValue))
+      if (result.payload) {
+        dispatch(getNews(result.payload as NewsState))
+      }
+    }
+
+    return () => {
+      makeApiCall()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (news.status !== "ok" && news.status !== undefined) {
+      Alert.alert('', news.status)
+    }
+  }, [news.status])
   
   return (
     <Root noPadding>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>FP News</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Button
+            title='Throw Error'
+            style={{
+              backgroundColor: '#000',
+              width: metrics.screenWidth / 3
+            }}
+            onPress={() => {
+              throw 'An error occurred'
+            }}
+          />
+        </View>
       </View>
       <View style={{ flex: 1, padding: 20 }}>
         <View style={styles.searchContainer}>
@@ -98,7 +130,12 @@ const NewsListing: React.FC = () => {
             onChangeText={setSearchValue}
             style={styles.searchInput}
           />
-          <Button title='Search' onPress={handleSearch} disabled={isLoading} />
+          <Button
+            title='Search'
+            onPress={handleSearch}
+            disabled={isLoading}
+            loading={isLoading}
+          />
         </View>
         {renderContent()}
       </View>

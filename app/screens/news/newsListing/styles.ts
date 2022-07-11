@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: colors.primary,
     justifyContent: 'center',
-    minHeight: metrics.screenWidth / 2,
+    minHeight: metrics.screenWidth / 2.1,
+    paddingTop: 20,
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
   },
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   searchInput: {
-    minWidth: metrics.screenWidth/1.5,
+    minWidth: metrics.screenWidth / 1.5,
     marginRight: 5
   },
   loaderWrapper: {
