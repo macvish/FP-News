@@ -6,5 +6,5 @@ import NewsDetails from '../screens/news/newsDetails'
 export const root: RenderScreenProps[] = [
   { name: 'Signup', component: Signup, options: { headerShown: false } },
   { name: 'NewsListing', component: NewsListing, options: { headerShown: false } },
-  { name: 'NewsDetails', component: NewsDetails, options: {} }
+  { name: 'NewsDetails', component: NewsDetails, options: { headerBackTitle: ' ', headerTitle: '' } }
 ]
