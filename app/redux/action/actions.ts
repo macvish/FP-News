@@ -2,7 +2,11 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { API } from '../../lib/api'
 import { toCamelCase } from '../../lib/object'
-import { ActionTypes, News, NewsState } from '../model.d'
+import { ActionTypes, News, NewsState, User } from '../model.d'
+
+export const setAuthMessage = createAction<string>(ActionTypes.SET_AUTH_MESSAGE)
+
+export const setUser = createAction<User>(ActionTypes.SET_USER)
 
 export const fetchNews = createAsyncThunk(
   ActionTypes.FETCH_NEWS,

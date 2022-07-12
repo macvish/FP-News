@@ -1,10 +1,16 @@
 import React from 'react'
 import { TextInput, TextInputProps, View } from 'react-native'
+import Text from '../Text'
 import styles from './styles'
 
-const Input: React.FC<TextInputProps> = ({ style, ...props }) => {
+interface InputProps extends TextInputProps {
+  label?: string
+}
+
+const Input: React.FC<InputProps> = ({ label, style, ...props }) => {
   return (
-    <View>
+    <View style={{ marginBottom: 10 }}>
+      {label ? <Text style={styles.inputLabel}>{label}</Text> : null}
       <TextInput
         {...props}
         style={[styles.container, style]}

@@ -23,6 +23,7 @@ import { newsSelector } from '../../../redux/reducer/newsReducer'
 import styles from './styles'
 import { trimText, colors } from '../../../lib/helper'
 import metrics from '../../../lib/metrics'
+import { authSelector } from '../../../redux/reducer/authReducer'
 
 interface RenderItemProps {
   item: Article
@@ -33,6 +34,7 @@ const NewsListing: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>('Nigeria')
   const dispatch = useDispatch<AppDispatch>()
   const { news, isLoading, errorMessage } = useSelector(newsSelector)
+  const { user } = useSelector(authSelector)
   const navigation = useNavigation<NewsListingScreenNavigationProps>()
 
   const handleSearch = async () => {
@@ -108,6 +110,10 @@ const NewsListing: React.FC = () => {
   return (
     <Root noPadding>
       <View style={styles.headerContainer}>
+        {user.fullName
+          ? (<Text style={{ textAlign: 'left' }}>Hi, {user.fullName}</Text>)
+          : null
+        }
         <Text style={styles.title}>FP News</Text>
         <View style={{ alignItems: 'center' }}>
           <Button

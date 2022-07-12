@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#EDEEEE'
+  },
+  inputLabel: {
+    fontSize: 15,
+    fontWeight: '500'
   }
 })
 
