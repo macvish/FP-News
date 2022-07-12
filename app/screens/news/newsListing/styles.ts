@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: metrics.screenWidth / 2.1,
     paddingTop: 20,
+    paddingHorizontal: 20,
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
   },
@@ -64,6 +65,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 12,
     textAlign: 'center'
+  },
+  greetings: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: colors.white,
+    textAlign: 'left'
   }
 })
 

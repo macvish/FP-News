@@ -14,7 +14,7 @@ import Text from '../../components/Text'
 import { LoginScreenNavigationProps } from '../../navigators/models'
 import styles from './styles'
 import { AppDispatch, User } from '../../redux/model'
-import { setUser } from '../../redux/action/actions'
+import { login, setUser } from '../../redux/action/actions'
 import { GOOGLE_CLIENT_ID, IS_LOGGED_IN } from '../../lib/constants'
 import { colors } from '../../lib/helper'
 
@@ -30,9 +30,7 @@ const Login: React.FC = () => {
       setIsLoading(true)
       return auth()
         .signInWithEmailAndPassword(email, password)
-        .then((cred) => {
-          setIsLoading(false)
-          
+        .then((cred) => {          
           AsyncStorage.setItem(IS_LOGGED_IN, 'true')
 
           firestore().collection('users')
@@ -43,9 +41,11 @@ const Login: React.FC = () => {
                 phoneNumber: doc.data()?.phoneNumber,
                 username: doc.data()?.username
               }
-    
+  
+              dispatch(login(true))
               dispatch(setUser(properData as User))
-              navigation.push('NewsListing')
+              setIsLoading(false)
+              navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
             })
         })
         .catch((err) => {
@@ -84,10 +84,11 @@ const Login: React.FC = () => {
       </View>
       <View>
         <Input
-          placeholder='Username'
-          label='Username'
+          placeholder='Email'
+          label='Email'
           value={email}
           onChangeText={setEmail}
+          autoComplete="email"
         />
         <Input
           placeholder='Password'

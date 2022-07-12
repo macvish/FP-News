@@ -4,6 +4,7 @@ import { ActionTypes, AuthState, RootState, User } from '../model.d'
 
 const initialAuthState: AuthState = {
   user: {},
+  isLoggedIn: false,
   message: ''
 }
 
@@ -13,6 +14,9 @@ const authReducer = createReducer(initialAuthState, {
   },
   [ActionTypes.SET_USER]: (state, action: PayloadAction<User>) => {
     state.user = action.payload
+  },
+  [ActionTypes.LOGIN]: (state, action: PayloadAction<boolean>) => {
+    state.isLoggedIn = action.payload
   }
 })
 
