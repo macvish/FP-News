@@ -7,16 +7,35 @@ import crashlytics from '@react-native-firebase/crashlytics'
 
 import AppNavigation from './navigators/app'
 import store from './redux/store'
+import AsyncStorage from '@react-native-community/async-storage'
+import { IS_LOGGED_IN } from './lib/constants'
 
 const App: React.FC = () => {
+  const [navInitialState, setNavInitialState] = React.useState<{
+    routes: { name: string }[]
+  }>({ routes: [] })
+  
+  const checkAuthStatus = async () => {
+    const isLoggedIn = await AsyncStorage.getItem(IS_LOGGED_IN)
+    
+    if (isLoggedIn === 'true') {
+      setNavInitialState({ routes: [{ name: 'NewsListing' }]})
+    } else {
+      setNavInitialState({ routes: [{ name: 'Login' }]})
+    }
+  }
   useEffect(() => {
-    crashlytics().log('App Mounted')
+    checkAuthStatus()
+    
+    return () => {
+      crashlytics().log('App Mounted')
+    }
   }, [])
   
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <NavigationContainer>
+        <NavigationContainer initialState={navInitialState}>
           <AppNavigation />
         </NavigationContainer>
       </SafeAreaProvider>

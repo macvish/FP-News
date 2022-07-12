@@ -8,6 +8,7 @@ export type AppDispatch = typeof store.dispatch
 
 export interface AuthState {
   user: User
+  isLoggedIn?: boolean
   message?: string
 }
 export interface User {

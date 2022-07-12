@@ -14,10 +14,11 @@ import Root from '../../components/Root'
 import styles from './styles'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { colors } from '../../lib/helper'
-import { setUser } from '../../redux/action/actions'
+import { login, setUser } from '../../redux/action/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, User } from '../../redux/model.d'
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin'
+import { GOOGLE_CLIENT_ID, IS_LOGGED_IN } from '../../lib/constants'
 
 interface FirstFormState {
   fullName: string
@@ -30,7 +31,7 @@ interface SecondFormState {
   password: string
 }
 
-const Signup = () => {
+const Signup: React.FC = () => {
   const [activeForm, setActiveForm] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [firstFormData, setFirstFormData] = useState<FirstFormState>({} as FirstFormState)
@@ -59,7 +60,7 @@ const Signup = () => {
       return auth()
         .createUserWithEmailAndPassword(firstFormData.email, secondFormData.password)
         .then((cred) => {
-          AsyncStorage.setItem('IS_LOGGED_IN', 'true')
+          AsyncStorage.setItem(IS_LOGGED_IN, 'true')
           return firestore().collection('users')
             .doc(cred.user.uid).set({
               fullName: firstFormData.fullName,
@@ -68,7 +69,6 @@ const Signup = () => {
             })
         })
         .then(() => {
-          setIsLoading(false)
           const authUserData = auth().currentUser
           firestore().collection('users')
             .doc(authUserData?.uid).get().then((doc) => {
@@ -78,9 +78,11 @@ const Signup = () => {
                 phoneNumber: doc.data()?.phoneNumber,
                 username: doc.data()?.username
               }
-    
+
+              dispatch(login(true))
               dispatch(setUser(properData as User))
-              navigation.push('NewsListing')
+              setIsLoading(false)
+              navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
             })
         })
         .catch((err) => {
@@ -94,7 +96,6 @@ const Signup = () => {
   const signupWithGoogle = () => {
     const signin = async () => {
       const { idToken } = await GoogleSignin.signIn()
-      console.log('here')
       const googleCredential = auth.GoogleAuthProvider.credential(idToken)
 
       return auth().signInWithCredential(googleCredential)
@@ -155,7 +156,7 @@ const Signup = () => {
   useEffect(() => {
     GoogleSignin.configure({
       scopes: ['email'],
-      webClientId: '779939245876-bbdmj9rngopb2tnpb22uuod41hshj2g7.apps.googleusercontent.com',
+      webClientId: GOOGLE_CLIENT_ID,
       offlineAccess: true
     })
   }, [])
@@ -167,7 +168,7 @@ const Signup = () => {
       </View>
       {activeForm === 0 ? renderFirstForm() : renderSecondForm()}
       <Button
-        title={activeForm === 0 ? 'Continue' : 'Submit'}
+        title={activeForm === 0 ? 'Continue' : 'Signup'}
         onPress={handleFormSubmit}
         loading={isLoading}
         disabled={isLoading}
@@ -177,12 +178,6 @@ const Signup = () => {
         <Text style={styles.orText}>OR</Text>
         <View style={styles.halfDivider} />
       </View>
-      {/* <Button
-        title='Signup with google'
-        onPress={handleFormSubmit}
-        // loading={isLoading}
-        disabled={isLoading}
-      /> */}
       <GoogleSigninButton
         style={{ width: 192, height: 48, alignSelf: 'center' }}
         size={1}
@@ -190,7 +185,7 @@ const Signup = () => {
         onPress={signupWithGoogle}
         disabled={isLoading}
       />
-      <TouchableOpacity onPress={() => navigation.push('Login')}>
+      <TouchableOpacity  style={{ marginTop: 5 }} onPress={() => navigation.goBack()}>
         <Text style={{ textAlign: 'center' }}>
           Already signed up? <Text style={{ color: colors.primary }}>Login</Text>
         </Text>

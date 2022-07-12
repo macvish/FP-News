@@ -4,6 +4,8 @@ import { API } from '../../lib/api'
 import { toCamelCase } from '../../lib/object'
 import { ActionTypes, News, NewsState, User } from '../model.d'
 
+export const login = createAction<boolean>(ActionTypes.LOGIN)
+
 export const setAuthMessage = createAction<string>(ActionTypes.SET_AUTH_MESSAGE)
 
 export const setUser = createAction<User>(ActionTypes.SET_USER)
