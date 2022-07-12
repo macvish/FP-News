@@ -1,14 +1,21 @@
-import { ActionTypes, AuthState } from '../model.d'
-import { AuthActionType } from '../action/authActionType'
-import { createReducer } from '@reduxjs/toolkit'
+import { createReducer, PayloadAction } from '@reduxjs/toolkit'
+
+import { ActionTypes, AuthState, RootState, User } from '../model.d'
 
 const initialAuthState: AuthState = {
+  user: {},
   message: ''
 }
 
-export const authReducer = createReducer(initialAuthState, (builder) => {
-  builder
-    .addCase(ActionTypes.LOGIN, (state, action: AuthActionType) => {
-      state.message = action.payload.message
-    })
+const authReducer = createReducer(initialAuthState, {
+  [ActionTypes.SET_AUTH_MESSAGE]: (state, action: PayloadAction<string>) => {
+    state.message = action.payload
+  },
+  [ActionTypes.SET_USER]: (state, action: PayloadAction<User>) => {
+    state.user = action.payload
+  }
 })
+
+export const authSelector = (state: RootState) => state.auth 
+
+export default authReducer
