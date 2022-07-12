@@ -48,15 +48,23 @@ const Login: React.FC = () => {
               navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
             })
         })
-        .catch((err) => {
-          Alert.alert(err)
-        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            Alert.alert('', 'That email address is already in use!')
+          }
+      
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert('', 'That email address is invalid!')
+          }
+      })
       }
   
     return Alert.alert('', 'Please fill in all required form')
   }
 
   const signupWithGoogle = () => {
+    setIsLoading(true)
+
     const signin = async () => {
       const { idToken } = await GoogleSignin.signIn()
       const googleCredential = auth.GoogleAuthProvider.credential(idToken)
@@ -65,7 +73,31 @@ const Login: React.FC = () => {
     }
 
     signin().then((cred) => {
-      console.log(cred)
+      AsyncStorage.setItem(IS_LOGGED_IN, 'true')
+
+      firestore().collection('users')
+        .doc(cred?.user.uid).get().then((doc) => {
+          const properData = {
+            email: cred?.user?.email,
+            fullName: doc.data()?.fullName,
+            phoneNumber: doc.data()?.phoneNumber,
+            username: doc.data()?.username
+          }
+
+          dispatch(login(true))
+          dispatch(setUser(properData as User))
+          setIsLoading(false)
+          navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
+        })
+    })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          Alert.alert('', 'That email address is already in use!')
+        }
+    
+        if (error.code === 'auth/invalid-email') {
+          Alert.alert('', 'That email address is invalid!')
+        }
     })
   }
 

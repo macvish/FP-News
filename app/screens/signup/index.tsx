@@ -3,7 +3,6 @@ import { Alert, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
-import crashlytics from '@react-native-firebase/crashlytics'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import { SignupScreenNavigationProps } from '../../navigators/models'
@@ -52,9 +51,10 @@ const Signup: React.FC = () => {
       if (firstFormData.email &&
         firstFormData.fullName
         && firstFormData.phoneNumber) {
-          return setActiveForm(1)
-        }
+        return setActiveForm(1)
       }
+    }
+    
     if (secondFormData.password && secondFormData.username) {
       setIsLoading(true)
       return auth()
@@ -85,10 +85,16 @@ const Signup: React.FC = () => {
               navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
             })
         })
-        .catch((err) => {
-          Alert.alert(err)
-        })
-      }
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            Alert.alert('', 'That email address is already in use!')
+          }
+      
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert('That email address is invalid!')
+          }
+      })
+    }
   
     return Alert.alert('', 'Please fill in all required form')
   }
@@ -102,7 +108,7 @@ const Signup: React.FC = () => {
     }
 
     signin().then((cred) => {
-      console.log(cred)
+      
     })
   }
   

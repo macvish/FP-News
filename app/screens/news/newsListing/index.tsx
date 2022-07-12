@@ -13,6 +13,8 @@ import moment from 'moment'
 import { isEmpty } from 'lodash'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
+import remoteConfig from '@react-native-firebase/remote-config'
+import messaging from '@react-native-firebase/messaging'
 
 import Button from '../../../components/Button'
 import Input from '../../../components/Input'
@@ -40,11 +42,12 @@ const NewsListing: React.FC = () => {
   const { news, isLoading, errorMessage } = useSelector(newsSelector)
   const { user, isLoggedIn } = useSelector(authSelector)
   const navigation = useNavigation<NewsListingScreenNavigationProps>()
+  const pageSize = remoteConfig().getValue('page_size').asNumber()
 
   const handleSearch = async () => {
     if (searchValue) {
       dispatch(toggleIsLoading(true))
-      const result = await dispatch(fetchNews(searchValue))
+      const result = await dispatch(fetchNews({searchValue, pageSize}))
       if (result.payload) {
         dispatch(getNews(result.payload as NewsState))
       }
@@ -101,6 +104,10 @@ const NewsListing: React.FC = () => {
   }
 
   useEffect(() => {
+    const message = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new message arrived!', JSON.stringify(remoteMessage))
+    })
+
     const checkLoginStatus = async () => {
       const isAsyncStoreLoggedIn = await AsyncStorage.getItem(IS_LOGGED_IN)
       if (!isLoggedIn && isAsyncStoreLoggedIn === 'true') {
@@ -119,14 +126,15 @@ const NewsListing: React.FC = () => {
       }
     }
 
-    const makeApiCall  = async () => {
-      const result = await dispatch(fetchNews(searchValue))
+    const makeApiCall = async () => {
+      const result = await dispatch(fetchNews({searchValue, pageSize}))
       if (result.payload) {
         dispatch(getNews(result.payload as NewsState))
       }
     }
 
     return () => {
+      message
       checkLoginStatus()
       makeApiCall()
     }

@@ -9,6 +9,7 @@ import AppNavigation from './navigators/app'
 import store from './redux/store'
 import AsyncStorage from '@react-native-community/async-storage'
 import { IS_LOGGED_IN } from './lib/constants'
+import { requestUserPermission } from './lib/permissions'
 
 const App: React.FC = () => {
   const [navInitialState, setNavInitialState] = React.useState<{
@@ -25,10 +26,11 @@ const App: React.FC = () => {
     }
   }
   useEffect(() => {
-    checkAuthStatus()
     
     return () => {
       crashlytics().log('App Mounted')
+      checkAuthStatus()
+      requestUserPermission()
     }
   }, [])
   
