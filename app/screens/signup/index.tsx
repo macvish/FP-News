@@ -46,6 +46,24 @@ const Signup: React.FC = () => {
     return setSecondFormData(prevState => ({ ...prevState, [name]: text }))
   }
 
+  const setUserData = () => {
+    const authUserData = auth().currentUser
+    firestore().collection('users')
+      .doc(authUserData?.uid).get().then((doc) => {
+        const properData = {
+          email: authUserData?.email,
+          fullName: doc.data()?.fullName,
+          phoneNumber: doc.data()?.phoneNumber,
+          username: doc.data()?.username
+        }
+
+        dispatch(login(true))
+        dispatch(setUser(properData as User))
+        setIsLoading(false)
+        navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
+      })
+  }
+
   const handleFormSubmit = () => {
     if (activeForm === 0) {
       if (firstFormData.email &&
@@ -69,23 +87,10 @@ const Signup: React.FC = () => {
             })
         })
         .then(() => {
-          const authUserData = auth().currentUser
-          firestore().collection('users')
-            .doc(authUserData?.uid).get().then((doc) => {
-              const properData = {
-                email: authUserData?.email,
-                fullName: doc.data()?.fullName,
-                phoneNumber: doc.data()?.phoneNumber,
-                username: doc.data()?.username
-              }
-
-              dispatch(login(true))
-              dispatch(setUser(properData as User))
-              setIsLoading(false)
-              navigation.reset({ index: 0, routes: [ { name: 'NewsListing' } ] })
-            })
+          setUserData()
         })
         .catch(error => {
+          setIsLoading(false)
           if (error.code === 'auth/email-already-in-use') {
             Alert.alert('', 'That email address is already in use!')
           }
@@ -108,8 +113,25 @@ const Signup: React.FC = () => {
     }
 
     signin().then((cred) => {
-      
-    })
+      AsyncStorage.setItem(IS_LOGGED_IN, 'true')
+      return firestore().collection('users')
+        .doc(cred.user.uid).set({
+          fullName: cred.user.displayName,
+          phoneNumber: cred.user.phoneNumber,
+          username: ''
+        })
+    }).then(() => {
+      setUserData()
+    }).catch(error => {
+      setIsLoading(false)
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('', 'That email address is already in use!')
+      }
+  
+      if (error.code === 'auth/invalid-email') {
+        Alert.alert('That email address is invalid!')
+      }
+  })
   }
   
   const renderFirstForm = () => {
